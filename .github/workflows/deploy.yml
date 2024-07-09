@@ -23,12 +23,12 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r ./* ec2-user@${{ secrets.EC2_PUBLIC_IP }}:/var/www/html/monopoly
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r ./* ec2-user@${{ secrets.EC2_PUBLIC_IP }}:/monopoly
 
     - name: Build and Run Docker Containers
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
-          cd /var/www/html/monopoly
+          cd /monopoly
           docker-compose down
           docker-compose up -d --build
         EOF
