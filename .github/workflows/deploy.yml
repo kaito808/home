@@ -18,17 +18,18 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+    - name: Create directory on EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@${{ secrets.EC2_PUBLIC_IP }} "mkdir -p /var/www/html/monopoly"
+
     - name: Copy files to EC2
       run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r ./* ec2-user@${{ secrets.EC2_PUBLIC_IP }}:/path/to/your/project
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r ./* ec2-user@${{ secrets.EC2_PUBLIC_IP }}:/var/www/html/monopoly
 
     - name: Build and Run Docker Containers
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
-          cd /path/to/your/project
+          cd /var/www/html/monopoly
           docker-compose down
           docker-compose up -d --build
         EOF
