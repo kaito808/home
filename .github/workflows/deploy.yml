@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy Laravel Application to EC2
 
 on:
   push:
@@ -20,8 +20,15 @@ jobs:
 
     - name: Copy files to EC2
       run: |
-        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r ./ ec2-user@${{ secrets.EC2_PUBLIC_IP }}:/path/to/your/project
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r ./* ec2-user@${{ secrets.EC2_PUBLIC_IP }}:/path/to/your/project
 
-    - name: Restart Apache
+    - name: Build and Run Docker Containers
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@${{ secrets.EC2_PUBLIC_IP }} "sudo systemctl restart httpd"
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+          cd /path/to/your/project
+          docker-compose down
+          docker-compose up -d --build
+        EOF
