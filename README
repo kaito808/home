@@ -1,0 +1,17 @@
+added: FROM php:fpm
+RUN docker-php-ext-install mysqli 
+
+docker-compose down
+docker-compose up --build -d
+docker exec it monopoly_bank bash
+apt-get update
+apt-get install -y iputils-ping dnsutils
+apt-get install -y php-mysqli
+ping player_db
+nslookup player_db
+
+composer create-project --prefer-dist laravel/laravel monopoly
+cd monopoly
+php artisan serve -> http://127.0.0.1:8000 -> Not Found The requested URL was not found on this server. Apache/2.4.54 (Debian) Server at 127.0.0.1 Port 8000
+
+
