@@ -35,3 +35,4 @@ jobs:
     - name: Restart Apache
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@${{ secrets.EC2_PUBLIC_IP }} "sudo systemctl restart httpd"
+
